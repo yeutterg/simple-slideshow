@@ -43,7 +43,22 @@ mv cleaned-photos photos
 python slideshow.py
 ```
 
-Open [http://127.0.0.1:8765](http://127.0.0.1:8765). Use the controls or press the spacebar to pause and resume. Press `F` for fullscreen.
+The default settings live in `config.json`:
+
+```json
+{
+  "photos": "photos",
+  "port": 8765
+}
+```
+
+Change `port` there if another local service is using `8765`, then run `python slideshow.py` again. Open the matching address, such as [http://127.0.0.1:8765](http://127.0.0.1:8765). Use the controls or press the spacebar to pause and resume. Press `F` for fullscreen.
+
+Command-line flags override the config for one run:
+
+```bash
+python slideshow.py --port 9000 --photos cleaned-photos
+```
 
 The server reads the photo folder when the page loads, so add or remove photos and refresh the browser to update it.
 

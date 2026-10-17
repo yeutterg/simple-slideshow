@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG", ".WEBP"}
+DEFAULT_CONFIG = Path("config.json")
 
 
 def page(photos: list[Path]) -> bytes:
@@ -38,11 +39,18 @@ setInterval(()=>{{if(playing&&photos.length>1)step(1)}},5000); show();
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--photos", type=Path, default=Path("photos"))
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument("--photos", type=Path, help="Override the photos folder from the config")
+    parser.add_argument("--port", type=int, help="Override the port from the config")
     args = parser.parse_args()
-    args.photos.mkdir(parents=True, exist_ok=True)
-    photos = sorted(path for path in args.photos.iterdir() if path.is_file() and path.suffix in IMAGE_EXTENSIONS)
+    settings = {"photos": "photos", "port": 8765}
+    if args.config.exists():
+        with args.config.open(encoding="utf-8") as config_file:
+            settings.update(json.load(config_file))
+    photos_dir = Path(args.photos or settings["photos"])
+    port = int(args.port or settings["port"])
+    photos_dir.mkdir(parents=True, exist_ok=True)
+    photos = sorted(path for path in photos_dir.iterdir() if path.is_file() and path.suffix in IMAGE_EXTENSIONS)
 
     class Handler(SimpleHTTPRequestHandler):
         def do_GET(self):  # noqa: N802
@@ -55,11 +63,11 @@ def main() -> None:
                 self.wfile.write(body)
                 return
             if self.path.startswith("/photos/"):
-                self.directory = str(args.photos.parent)
+                self.directory = str(photos_dir.parent)
             super().do_GET()
 
-    print(f"Serving {len(photos)} photos at http://127.0.0.1:{args.port}")
-    ThreadingHTTPServer(("127.0.0.1", args.port), Handler).serve_forever()
+    print(f"Serving {len(photos)} photos at http://127.0.0.1:{port}")
+    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
 
 
 if __name__ == "__main__":
