@@ -1,0 +1,23 @@
+# Personal photo folders and generated output
+photos/
+cleaned-photos/
+work/
+outputs/
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.JPG
+*.JPEG
+*.PNG
+*.HEIC
+
+# Local environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# Editor and OS files
+.idea/
+.vscode/
