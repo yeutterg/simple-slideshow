@@ -11,6 +11,7 @@ outputs/
 *.JPEG
 *.PNG
 *.HEIC
+!docs/slideshow-screenshot.png
 
 # Local environments and caches
 .venv/

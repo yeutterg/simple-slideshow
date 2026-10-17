@@ -2,6 +2,8 @@
 
 A small, local photo slideshow with an optional cleanup step for scanned or photographed prints.
 
+![Simple Slideshow running with generic demo photos](docs/slideshow-screenshot.png)
+
 ## 1. Install
 
 ```bash
